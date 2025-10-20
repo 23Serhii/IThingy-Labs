@@ -1,0 +1,21 @@
+# Node / Next / Vercel
+/node_modules
+/.pnp
+.pnp.js
+# client build
+/client/.next
+/client/.vercel
+/client/node_modules
+/client/.env*
+# server build / artifacts
+/server/dist
+/server/node_modules
+/server/.env*
+# IDE
+/.idea
+.vscode
+.DS_Store
+.next/
+client/.next/
+node_modules/
+client/node_modules/
