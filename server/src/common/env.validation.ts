@@ -1,34 +1,44 @@
-import { z } from 'zod'
+// src/common/env.validation.ts
+import { z } from 'zod';
 
-const EnvSchema = z.object({
-    NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-    PORT: z.coerce.number().default(4000),
-    CLIENT_ORIGIN: z.string().url().default('http://localhost:3000'),
+const EnvSchema = z
+    .object({
+        NODE_ENV: z.enum(['development', 'production', 'test']).default('production'),
+        PORT: z.coerce.number().default(4000),
 
-    // Turnstile
-    TURNSTILE_SECRET: z.string().min(10),
+        // Можна передати кілька origin-ів через кому
+        CLIENT_ORIGIN: z.string().min(1, 'CLIENT_ORIGIN is required'),
 
-    // Email (Resend)
-    RESEND_API_KEY: z.string().optional(),
-    RESEND_FROM: z.string().optional(),
-    RESEND_TO: z.string().optional(),
+        // Turnstile: робимо необов’язковим за замовчуванням
+        TURNSTILE_REQUIRED: z.coerce.boolean().default(false),
+        TURNSTILE_SECRET: z.string().optional(),
 
-    // Telegram
-    TELEGRAM_BOT_TOKEN: z.string().optional(),
-    TELEGRAM_CHAT_ID: z.string().optional(),
+        // Mail (Resend)
+        RESEND_API_KEY: z.string().optional(),
+        RESEND_FROM: z.string().email().optional(),
+        RESEND_TO: z.string().email().optional(),
 
-    // Supabase (опційно)
-    SUPABASE_URL: z.string().url().optional(),
-    SUPABASE_SERVICE_ROLE: z.string().optional(),
-})
+        // Telegram (опційно)
+        TELEGRAM_BOT_TOKEN: z.string().optional(),
+        TELEGRAM_CHAT_ID: z.string().optional(),
 
-export type Env = z.infer<typeof EnvSchema>
+        // Supabase (опційно)
+        SUPABASE_URL: z.string().url().optional(),
+        SUPABASE_SERVICE_ROLE: z.string().optional(),
+    })
+    .refine(
+        (env) => !env.TURNSTILE_REQUIRED || !!env.TURNSTILE_SECRET,
+        {
+            path: ['TURNSTILE_SECRET'],
+            message: 'Provide TURNSTILE_SECRET when TURNSTILE_REQUIRED=true',
+        }
+    );
 
 export function validateEnv(config: Record<string, unknown>) {
-    const parsed = EnvSchema.safeParse(config)
+    const parsed = EnvSchema.safeParse(config);
     if (!parsed.success) {
-        console.error('Invalid environment:', parsed.error.flatten().fieldErrors)
-        process.exit(1)
+        // Кидаємо читабельну помилку, яку Railway покаже в логах
+        throw new Error(JSON.stringify(parsed.error.format(), null, 2));
     }
-    return parsed.data
+    return parsed.data;
 }
