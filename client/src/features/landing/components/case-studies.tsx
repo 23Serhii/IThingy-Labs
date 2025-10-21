@@ -7,14 +7,13 @@ import {motion} from 'framer-motion'
 import {Button} from '@/shared/ui/button'
 import {ChevronRight, Clock, Users, Server} from 'lucide-react'
 
-type Project = {
+// 1) типи
+type BaseProject = {
     id: string
     title: string
     tags: string[]
     description: string
     media: string
-    poster?: string
-    type: 'video' | 'image'
     daysSpent: number
     avgDaysTypical: number
     teamSize: number
@@ -22,6 +21,18 @@ type Project = {
     resultHighlights?: string[]
 }
 
+type VideoProject = BaseProject & {
+    type: 'video'
+    poster?: string
+}
+
+type ImageProject = BaseProject & {
+    type: 'image' // gif рендеримо як image
+}
+
+type Project = VideoProject | ImageProject
+
+// 2) масив — СТРОГО Project[]
 const projects: Project[] = [
     {
         id: 'dropsquad',
@@ -59,7 +70,7 @@ const projects: Project[] = [
         description:
             'High-throughput platform designed for scale — resilient APIs, background processing and async workers to handle bursty traffic patterns.',
         media: '/tonsai.gif',
-        type: 'image',
+        type: 'image', 
         daysSpent: 30,
         avgDaysTypical: 68,
         teamSize: 2,
@@ -67,6 +78,7 @@ const projects: Project[] = [
         resultHighlights: ['99.95% uptime target', 'Processing throughput ↑ 4x'],
     },
 ]
+
 
 function useMediaQuery(query: string) {
     const [matches, setMatches] = useState(false)
