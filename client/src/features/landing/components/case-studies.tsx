@@ -22,44 +22,7 @@ type Project = {
     resultHighlights?: string[]
 }
 
-const projects: ({
-    id: string;
-    title: string;
-    tags: string[];
-    description: string;
-    media: string;
-    poster: string;
-    type: string;
-    daysSpent: number;
-    avgDaysTypical: number;
-    teamSize: number;
-    techHighlights: string[];
-    resultHighlights: string[]
-} | {
-    id: string;
-    title: string;
-    tags: string[];
-    description: string;
-    media: string;
-    type: string;
-    daysSpent: number;
-    avgDaysTypical: number;
-    teamSize: number;
-    techHighlights: string[];
-    resultHighlights: string[]
-} | {
-    id: string;
-    title: string;
-    tags: string[];
-    description: string;
-    media: string;
-    type: string;
-    daysSpent: number;
-    avgDaysTypical: number;
-    teamSize: number;
-    techHighlights: string[];
-    resultHighlights: string[]
-})[] = [
+const projects: Project[] = [
     {
         id: 'dropsquad',
         title: 'DropSquad Dashboard',
@@ -96,7 +59,7 @@ const projects: ({
         description:
             'High-throughput platform designed for scale — resilient APIs, background processing and async workers to handle bursty traffic patterns.',
         media: '/tonsai.gif',
-        type: 'gif',
+        type: 'image',
         daysSpent: 30,
         avgDaysTypical: 68,
         teamSize: 2,
