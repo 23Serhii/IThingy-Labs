@@ -253,16 +253,16 @@ export function CaseStudies(): JSX.Element {
                                                     </ul>
                                                 )}
 
-                                                <div className="flex items-center gap-3">
-                                                    <a href={`/cases/${p.id}`}
-                                                       className="inline-block px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-semibold">
-                                                        View case
-                                                    </a>
-                                                    <Button variant="outline" size="sm"
-                                                            className="border-border text-foreground">
-                                                        Contact us about this
-                                                    </Button>
-                                                </div>
+                                                {/*<div className="flex items-center gap-3">*/}
+                                                {/*    <a href={`/cases/${p.id}`}*/}
+                                                {/*       className="inline-block px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-semibold">*/}
+                                                {/*        View case*/}
+                                                {/*    </a>*/}
+                                                {/*    <Button variant="outline" size="sm"*/}
+                                                {/*            className="border-border text-foreground">*/}
+                                                {/*        Contact us about this*/}
+                                                {/*    </Button>*/}
+                                                {/*</div>*/}
                                             </div>
                                         ) : (
                                             <div className="mt-auto">
