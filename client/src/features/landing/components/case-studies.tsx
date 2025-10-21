@@ -70,7 +70,7 @@ const projects: Project[] = [
         description:
             'High-throughput platform designed for scale — resilient APIs, background processing and async workers to handle bursty traffic patterns.',
         media: '/tonsai.gif',
-        type: 'image', 
+        type: 'image',
         daysSpent: 30,
         avgDaysTypical: 68,
         teamSize: 2,
@@ -176,7 +176,8 @@ export function CaseStudies(): JSX.Element {
                                                 key={p.id}
                                                 src={p.media}
                                                 className="w-full h-full object-cover select-none"
-                                                poster={p.poster ?? '/placeholder-project.jpg'}
+                                                poster={p.type === 'video' ? (p.poster ?? '/sub1.png') : undefined}
+
                                                 playsInline
                                                 muted
                                                 autoPlay={isActive}
