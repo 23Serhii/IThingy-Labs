@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-
+@layer base {
+    html, body { overflow-x: hidden; }
+}
 @custom-variant dark (&:is(.dark *));
 :root { color-scheme: light; }
 html.dark { color-scheme: dark; }

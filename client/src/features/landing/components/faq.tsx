@@ -396,7 +396,6 @@ export function FAQ() {
             </section>
 
             {/* FAQ Section */}
-            {/* FAQ Section (EN) */}
             <section id="faq" className="py-24 relative bg-background">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 max-w-4xl">
                     <motion.div

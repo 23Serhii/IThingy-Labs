@@ -19,3 +19,4 @@
 client/.next/
 node_modules/
 client/node_modules/
+.vercel

@@ -1,11 +1,11 @@
 'use client'
 
-import React, { JSX } from 'react'
+import React, {JSX} from 'react'
 import Image from 'next/image'
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { Button } from '@/shared/ui/button'
-import { ChevronRight, Clock, Users, Server } from 'lucide-react'
+import {useState} from 'react'
+import {motion} from 'framer-motion'
+import {Button} from '@/shared/ui/button'
+import {ChevronRight, Clock, Users, Server} from 'lucide-react'
 
 type Project = {
     id: string
@@ -22,7 +22,44 @@ type Project = {
     resultHighlights?: string[]
 }
 
-const projects: Project[] = [
+const projects: ({
+    id: string;
+    title: string;
+    tags: string[];
+    description: string;
+    media: string;
+    poster: string;
+    type: string;
+    daysSpent: number;
+    avgDaysTypical: number;
+    teamSize: number;
+    techHighlights: string[];
+    resultHighlights: string[]
+} | {
+    id: string;
+    title: string;
+    tags: string[];
+    description: string;
+    media: string;
+    type: string;
+    daysSpent: number;
+    avgDaysTypical: number;
+    teamSize: number;
+    techHighlights: string[];
+    resultHighlights: string[]
+} | {
+    id: string;
+    title: string;
+    tags: string[];
+    description: string;
+    media: string;
+    type: string;
+    daysSpent: number;
+    avgDaysTypical: number;
+    teamSize: number;
+    techHighlights: string[];
+    resultHighlights: string[]
+})[] = [
     {
         id: 'dropsquad',
         title: 'DropSquad Dashboard',
@@ -58,8 +95,8 @@ const projects: Project[] = [
         tags: ['Next.js', 'GraphQL', 'Postgres'],
         description:
             'High-throughput platform designed for scale — resilient APIs, background processing and async workers to handle bursty traffic patterns.',
-        media: '/tonsai.mp4',
-        type: 'video',
+        media: '/tonsai.gif',
+        type: 'gif',
         daysSpent: 30,
         avgDaysTypical: 68,
         teamSize: 2,
@@ -68,18 +105,35 @@ const projects: Project[] = [
     },
 ]
 
+function useMediaQuery(query: string) {
+    const [matches, setMatches] = useState(false)
+    React.useEffect(() => {
+        const m = window.matchMedia(query)
+        const onChange = () => setMatches(m.matches)
+        onChange()
+        m.addEventListener?.('change', onChange)
+        return () => m.removeEventListener?.('change', onChange)
+    }, [query])
+    return matches
+}
+
+
 export function CaseStudies(): JSX.Element {
     const [active, setActive] = useState<number>(0) // default: DropSquad active (left wide)
 
-    const gridTemplate = active === 0 ? '1.6fr 1fr 1fr' : active === 1 ? '1fr 1.6fr 1fr' : '1fr 1fr 1.6fr'
+    const isDesktop = useMediaQuery('(min-width: 768px)') // md breakpoint
+    const gridTemplate = isDesktop
+        ? (active === 0 ? '1.6fr 1fr 1fr' : active === 1 ? '1fr 1.6fr 1fr' : '1fr 1fr 1.6fr')
+        : '1fr' // <-- одна колонка на мобільних
 
     const statBadge = (
         label: string,
         value: string,
         Icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>
     ) => (
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-card/40 border border-border text-xs font-medium">
-            {Icon ? <Icon className="w-4 h-4 text-primary" /> : null}
+        <div
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-card/40 border border-border text-xs font-medium">
+            {Icon ? <Icon className="w-4 h-4 text-primary"/> : null}
             <span className="whitespace-nowrap">
         <strong className="font-semibold mr-1">{value}</strong>
         <span className="text-muted-foreground">{label}</span>
@@ -88,25 +142,28 @@ export function CaseStudies(): JSX.Element {
     )
 
     return (
-        <section id="cases" className="py-24 relative grid-bg">
-            <div className="absolute inset-0 purple-pink-gradient -z-10 opacity-25 dark:opacity-35" />
+        <section id="cases" className="py-24 relative grid-bg scroll-mt-24 md:scroll-mt-32 overflow-x-clip">
+
+            <div className="absolute inset-0 purple-pink-gradient -z-10 opacity-25 dark:opacity-35"/>
 
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }} className="text-center mb-14">
+                <motion.div initial={{opacity: 0, y: 6}} animate={{opacity: 1, y: 0}} transition={{duration: 0.45}}
+                            className="text-center mb-14">
                     <h2 className="text-4xl sm:text-5xl font-bold italic text-foreground">Projects</h2>
                     <div className="inline-flex items-center gap-2 text-muted-foreground mt-2">
-                        <ChevronRight className="h-5 w-5 text-primary" />
+                        <ChevronRight className="h-5 w-5 text-primary"/>
                         <span className="text-sm font-medium">Selected case studies</span>
-                        <ChevronRight className="h-5 w-5 text-primary" />
+                        <ChevronRight className="h-5 w-5 text-primary"/>
                     </div>
                 </motion.div>
 
                 <div
-                    className="grid gap-8 items-stretch"
+                    className="grid gap-6 sm:gap-8 items-stretch max-w-full"
                     style={{
                         display: 'grid',
                         gridTemplateColumns: gridTemplate,
                         transition: 'grid-template-columns 420ms cubic-bezier(.2,.9,.2,1)',
+                        width: '100%',
                     }}
                     aria-live="polite"
                 >
@@ -118,8 +175,8 @@ export function CaseStudies(): JSX.Element {
                             <motion.article
                                 key={p.id}
                                 layout
-                                transition={{ type: 'spring', stiffness: 260, damping: 28 }}
-                                className="relative h-full cursor-pointer"
+                                transition={{type: 'spring', stiffness: 260, damping: 28}}
+                                className="relative h-full cursor-pointer min-w-8"
                                 onClick={() => setActive(i)}
                                 role="button"
                                 aria-pressed={isActive}
@@ -137,9 +194,11 @@ export function CaseStudies(): JSX.Element {
                                         isActive ? 'ring-primary/50 border-primary/40 shadow-lg' : 'hover:ring-primary/30 hover:border-primary/30',
                                     ].join(' ')}
                                 >
-                                    <div className="aspect-[16/9] w-full rounded-t-2xl bg-muted/40 flex items-center justify-center border-b border-border/50 overflow-hidden relative">
+                                    <div
+                                        className="aspect-[16/9] w-full rounded-t-2xl bg-muted/40 flex items-center justify-center border-b border-border/50 overflow-hidden relative">
                                         {p.type === 'video' ? (
                                             <video
+                                                key={p.id}
                                                 src={p.media}
                                                 className="w-full h-full object-cover select-none"
                                                 poster={p.poster ?? '/placeholder-project.jpg'}
@@ -148,6 +207,7 @@ export function CaseStudies(): JSX.Element {
                                                 autoPlay={isActive}
                                                 loop
                                                 controls={false}
+                                                preload="metadata"
                                                 onContextMenu={(e) => e.preventDefault()}
                                                 tabIndex={-1}
                                                 // controlsList / disablePictureInPicture are allowed if you added global types
@@ -156,15 +216,15 @@ export function CaseStudies(): JSX.Element {
                                                 aria-hidden="true"
                                             />
                                         ) : (
-                                            <Image src={p.media} alt={p.title} fill style={{ objectFit: 'cover' }} />
+                                            <Image src={p.media} alt={p.title} fill style={{objectFit: 'cover'}}/>
                                         )}
                                     </div>
 
-                                    <div className="p-6 flex flex-col grow">
+                                    <div className="p-6 flex flex-col grow min-w-0">
                                         <div className="flex items-start justify-between gap-4">
-                                            <div>
-                                                <h3 className="text-lg sm:text-xl font-bold mb-1 text-foreground">{p.title}</h3>
-                                                <p className="text-xs text-muted-foreground mb-3">{p.tags.join(' · ')}</p>
+                                            <div className="min-w-0">
+                                                <h3 className="text-lg sm:text-xl font-bold mb-1 text-foreground truncate">{p.title}</h3>
+                                                <p className="text-xs text-muted-foreground mb-3 truncate">{p.tags.join(' · ')}</p>
                                             </div>
 
                                             <div className="flex flex-col items-end gap-2 shrink-0">
@@ -173,11 +233,13 @@ export function CaseStudies(): JSX.Element {
                                             </div>
                                         </div>
 
-                                        <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{p.description}</p>
-
+                                        <p className="text-sm text-muted-foreground mb-4 leading-relaxed break-words">
+                                            {p.description}
+                                        </p>
                                         <div className="flex flex-wrap gap-2 mb-4">
                                             {p.techHighlights.map((t) => (
-                                                <span key={t} className="px-2 py-1 rounded-md bg-background/30 border border-border text-xs text-muted-foreground">
+                                                <span key={t}
+                                                      className="px-2 py-1 rounded-md bg-background/30 border border-border text-xs text-muted-foreground">
                           {t}
                         </span>
                                             ))}
@@ -187,7 +249,9 @@ export function CaseStudies(): JSX.Element {
                                             <div className="mt-auto space-y-4">
                                                 <div className="flex items-center justify-between gap-4">
                                                     <div>
-                                                        <div className="text-sm text-muted-foreground">Delivery vs typical</div>
+                                                        <div className="text-sm text-muted-foreground">Delivery vs
+                                                            typical
+                                                        </div>
                                                         <div className="text-lg font-semibold text-foreground">
                                                             {p.daysSpent}d — {speedGain}% faster
                                                         </div>
@@ -195,7 +259,9 @@ export function CaseStudies(): JSX.Element {
 
                                                     <div className="text-right">
                                                         <div className="text-sm text-muted-foreground">Team</div>
-                                                        <div className="text-lg font-semibold text-foreground">{p.teamSize} engineers</div>
+                                                        <div
+                                                            className="text-lg font-semibold text-foreground">{p.teamSize} engineers
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -203,7 +269,8 @@ export function CaseStudies(): JSX.Element {
                                                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-muted-foreground">
                                                         {p.resultHighlights.map((r) => (
                                                             <li key={r} className="flex items-start gap-2">
-                                                                <Server className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                                                                <Server
+                                                                    className="w-4 h-4 text-primary flex-shrink-0 mt-0.5"/>
                                                                 <span>{r}</span>
                                                             </li>
                                                         ))}
@@ -211,17 +278,20 @@ export function CaseStudies(): JSX.Element {
                                                 )}
 
                                                 <div className="flex items-center gap-3">
-                                                    <a href={`/cases/${p.id}`} className="inline-block px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-semibold">
+                                                    <a href={`/cases/${p.id}`}
+                                                       className="inline-block px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-semibold">
                                                         View case
                                                     </a>
-                                                    <Button variant="outline" size="sm" className="border-border text-foreground">
+                                                    <Button variant="outline" size="sm"
+                                                            className="border-border text-foreground">
                                                         Contact us about this
                                                     </Button>
                                                 </div>
                                             </div>
                                         ) : (
                                             <div className="mt-auto">
-                                                <div className="text-xs text-muted-foreground">Click to open details</div>
+                                                <div className="text-xs text-muted-foreground">Click to open details
+                                                </div>
                                             </div>
                                         )}
                                     </div>

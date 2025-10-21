@@ -13,7 +13,6 @@ export class ContactService {
     ) {}
 
     async handleLead(dto: LeadDto, ip?: string, ua?: string) {
-        // 🧹 Без CAPTCHA перевірки
         const lead = {
             full_name: dto.name,
             email: dto.email,
@@ -24,21 +23,23 @@ export class ContactService {
             user_agent: ua ?? null,
         }
 
-        // 💾 Опціонально зберегти у Supabase
         await this.db.insertLead(lead).catch(() => {})
 
-        const text = [
+        const lines = [
             '🟢 New Lead — IThingy Labs',
             `👤 Name: ${lead.full_name}`,
             `📧 Email: ${lead.email}`,
             `📞 Phone: ${lead.phone}`,
             `💬 Message: ${lead.message}`,
             ip ? `🌐 IP: ${ip}` : '',
-        ].join('\n')
+            ua ? `🧭 UA: ${ua}` : '',
+            Object.keys(lead.utm || {}).length ? `📈 UTM: ${JSON.stringify(lead.utm)}` : '',
+        ].filter(Boolean)
 
-        // 📤 Надсилаємо в Telegram і на пошту
+        const text = lines.join('\n')
+
         await Promise.allSettled([
-            this.mail.send('New Lead — IThingy Labs', text),
+            this.mail.send('New Lead — IThingy Labs', text, lead.email), // ← replyTo
             this.tg.send(text),
         ])
 
