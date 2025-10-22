@@ -4,7 +4,6 @@ import React, {JSX} from 'react'
 import Image from 'next/image'
 import {useState} from 'react'
 import {motion} from 'framer-motion'
-import {Button} from '@/shared/ui/button'
 import {ChevronRight, Clock, Users, Server} from 'lucide-react'
 
 // 1) типи
