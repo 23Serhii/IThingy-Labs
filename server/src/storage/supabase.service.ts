@@ -9,7 +9,7 @@ export class SupabaseService {
     async insertLead(lead: any) {
         const url = this.cfg.get<string>('SUPABASE_URL')
         const key = this.cfg.get<string>('SUPABASE_SERVICE_ROLE')
-        if (!url || !key) return
+        if (!url || !key) throw new Error('Supabase env missing')
 
         const r = await fetch(`${url}/rest/v1/leads`, {
             method: 'POST',
@@ -17,13 +17,18 @@ export class SupabaseService {
                 apikey: key,
                 Authorization: `Bearer ${key}`,
                 'Content-Type': 'application/json',
-                Prefer: 'return=minimal',
+                Prefer: 'return=representation',
             },
             body: JSON.stringify(lead),
         })
+
+        const raw = await r.text()
         if (!r.ok) {
-            const t = await r.text()
-            throw new Error(`Supabase error: ${r.status} ${t}`)
+            throw new Error(`Supabase error: ${r.status} ${raw}`)
         }
+
+        // PostgREST повертає масив вставлених рядків
+        const data = raw ? JSON.parse(raw) : []
+        return Array.isArray(data) ? data[0] ?? null : null
     }
 }

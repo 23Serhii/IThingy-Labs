@@ -23,7 +23,11 @@ export class ContactService {
             user_agent: ua ?? null,
         }
 
-        await this.db.insertLead(lead).catch(() => {})
+        const dbRes = await this.db.insertLead(lead).catch((e) => {
+            console.error('[insertLead] failed:', e)
+            return null
+        })
+        const dbOk = !!dbRes?.id
 
         const lines = [
             '🟢 New Lead — IThingy Labs',
@@ -35,14 +39,13 @@ export class ContactService {
             ua ? `🧭 UA: ${ua}` : '',
             Object.keys(lead.utm || {}).length ? `📈 UTM: ${JSON.stringify(lead.utm)}` : '',
         ].filter(Boolean)
-
         const text = lines.join('\n')
 
         await Promise.allSettled([
-            this.mail.send('New Lead — IThingy Labs', text, lead.email), // ← replyTo
+            this.mail.send('New Lead — IThingy Labs', text),
             this.tg.send(text),
         ])
 
-        return { ok: true }
+        return { ok: true, dbOk, id: dbRes?.id ?? null }
     }
 }

@@ -88,7 +88,7 @@ export function Testimonials() {
                         </Button>
 
                         <div className="mt-3 ...">
-                         
+
                             <Link href="/whitepaper" className="underline">Read whitepaper</Link>
                         </div>
 
