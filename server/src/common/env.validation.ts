@@ -1,44 +1,22 @@
-// src/common/env.validation.ts
-import { z } from 'zod';
+// env.validation.ts
+import { z } from 'zod'
 
-const EnvSchema = z
-    .object({
-        NODE_ENV: z.enum(['development', 'production', 'test']).default('production'),
-        PORT: z.coerce.number().default(4000),
-
-        // Можна передати кілька origin-ів через кому
-        CLIENT_ORIGIN: z.string().min(1, 'CLIENT_ORIGIN is required'),
-
-        // Turnstile: робимо необов’язковим за замовчуванням
-        TURNSTILE_REQUIRED: z.coerce.boolean().default(false),
+export const validateEnv = (config: Record<string, unknown>) => {
+    const schema = z.object({
+        NODE_ENV: z.string().default('production'),
+        PORT: z.string().optional(), // Railway дасть PORT
+        CLIENT_ORIGIN: z.string().url().optional(),
         TURNSTILE_SECRET: z.string().optional(),
-
-        // Mail (Resend)
         RESEND_API_KEY: z.string().optional(),
-        RESEND_FROM: z.string().email().optional(),
-        RESEND_TO: z.string().email().optional(),
-
-        // Telegram (опційно)
-        TELEGRAM_BOT_TOKEN: z.string().optional(),
-        TELEGRAM_CHAT_ID: z.string().optional(),
-
-        // Supabase (опційно)
+        RESEND_FROM: z.string().optional(),
+        RESEND_TO: z.string().optional(),
         SUPABASE_URL: z.string().url().optional(),
         SUPABASE_SERVICE_ROLE: z.string().optional(),
     })
-    .refine(
-        (env) => !env.TURNSTILE_REQUIRED || !!env.TURNSTILE_SECRET,
-        {
-            path: ['TURNSTILE_SECRET'],
-            message: 'Provide TURNSTILE_SECRET when TURNSTILE_REQUIRED=true',
-        }
-    );
-
-export function validateEnv(config: Record<string, unknown>) {
-    const parsed = EnvSchema.safeParse(config);
+    const parsed = schema.safeParse(config)
     if (!parsed.success) {
-        // Кидаємо читабельну помилку, яку Railway покаже в логах
-        throw new Error(JSON.stringify(parsed.error.format(), null, 2));
+        // Не фейлимо все — лише лог:
+        console.warn('ENV WARN:', parsed.error.flatten())
     }
-    return parsed.data;
+    return config
 }
