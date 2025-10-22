@@ -10,6 +10,6 @@ export class ContactController {
     async postContact(@Body() dto: LeadDto, @Ip() ip: string, @Req() req: any) {
         const ua = req.headers['user-agent'] as string | undefined
         const result = await this.service.handleLead(dto, ip, ua)
-        return result       
+        return result
     }
 }
