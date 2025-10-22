@@ -81,7 +81,7 @@ export function Testimonials() {
 
                         <div className="mt-auto">
                             <Button asChild size="lg" className="w-full">
-                                <a href="/contact?intent=secure-sprint">Start a 4-week Secure Sprint</a>
+                                <a href="/#contact">Start a 4-week Secure Sprint</a>
                             </Button>
 
                             <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[12px] sm:text-xs text-muted-foreground">

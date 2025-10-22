@@ -21,7 +21,7 @@ export function Pricing() {
                 'Security summary & risk plan (NDA available)',
                 'Handoff-ready code & artifacts',
             ],
-            cta: { text: 'Book Secure Sprint', href: '/contact?intent=secure-sprint', variant: 'primary' },
+            cta: { text: 'Book Secure Sprint', href: '/#contact', variant: 'primary' },
             highlight: true,
         },
         {
