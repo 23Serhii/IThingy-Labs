@@ -38,7 +38,7 @@ export default function WhitepaperPage() {
                             Download PDF
                         </a>
 
-                        <Link href="/contact?intent=secure-sprint" className="inline-block px-5 py-2 rounded-md text-sm bg-emerald-600 text-white">
+                        <Link href="/#contact" className="inline-block px-5 py-2 rounded-md text-sm bg-emerald-600 text-white">
                             Start a Secure Sprint
                         </Link>
                     </div>

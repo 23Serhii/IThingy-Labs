@@ -1,11 +1,20 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @layer base {
-    html, body { overflow-x: hidden; }
+    html, body {
+        overflow-x: hidden;
+    }
 }
+
 @custom-variant dark (&:is(.dark *));
-:root { color-scheme: light; }
-html.dark { color-scheme: dark; }
+:root {
+    color-scheme: light;
+}
+
+html.dark {
+    color-scheme: dark;
+}
+
 @theme inline {
     --color-background: var(--background);
     --color-foreground: var(--foreground);
@@ -60,10 +69,10 @@ html.dark { color-scheme: dark; }
     --popover-foreground: oklch(0.12 0.01 270);
 
     /* Акценти (приглушені, “тактильні”) */
-    --primary: oklch(0.60 0.17 330);       /* фіолетово-рожевий */
+    --primary: oklch(0.60 0.17 330); /* фіолетово-рожевий */
     --primary-foreground: oklch(0.98 0 0);
 
-    --secondary: oklch(0.85 0.02 270);     /* теплий світло-сірий */
+    --secondary: oklch(0.85 0.02 270); /* теплий світло-сірий */
     --secondary-foreground: oklch(0.20 0.02 270);
 
     --muted: oklch(0.90 0.02 270);
@@ -72,11 +81,11 @@ html.dark { color-scheme: dark; }
     --accent: oklch(0.65 0.15 330);
     --accent-foreground: oklch(0.98 0 0);
 
-    --destructive: oklch(0.67 0.09 18.7);  /* мʼякий теплий червонуватий для помилок */
+    --destructive: oklch(0.67 0.09 18.7); /* мʼякий теплий червонуватий для помилок */
 
     --border: oklch(0.25 0.02 270 / 0.15);
-    --input:  oklch(0.25 0.02 270 / 0.15);
-    --ring:   oklch(0.60 0.17 330);
+    --input: oklch(0.25 0.02 270 / 0.15);
+    --ring: oklch(0.60 0.17 330);
 }
 
 .dark {
@@ -105,11 +114,9 @@ html.dark { color-scheme: dark; }
     --destructive: oklch(0.62 0.10 20);
 
     --border: oklch(0.25 0.02 270 / 0.30);
-    --input:  oklch(0.30 0.02 270 / 0.30);
-    --ring:   oklch(0.65 0.17 330);
+    --input: oklch(0.30 0.02 270 / 0.30);
+    --ring: oklch(0.65 0.17 330);
 }
-
-
 
 
 /* Універсальний градієнт секцій під палітру */
@@ -123,7 +130,9 @@ html.dark { color-scheme: dark; }
 }
 
 @layer base {
-    * { @apply border-border outline-ring/50; }
+    * {
+        @apply border-border outline-ring/50;
+    }
 
     /* 🌞 Light: чистий фон */
     body {
@@ -134,47 +143,76 @@ html.dark { color-scheme: dark; }
 
     /* 🌙 Dark: повертаємо решітку ТІЛЬКИ тут */
     html.dark body {
-        background-image:
-                linear-gradient(45deg, transparent 48%, rgba(168,85,247,0.05) 49%, rgba(168,85,247,0.05) 51%, transparent 52%),
-                linear-gradient(-45deg, transparent 48%, rgba(236,72,153,0.05) 49%, rgba(236,72,153,0.05) 51%, transparent 52%);
+        background-image: linear-gradient(45deg, transparent 48%, rgba(168, 85, 247, 0.05) 49%, rgba(168, 85, 247, 0.05) 51%, transparent 52%),
+        linear-gradient(-45deg, transparent 48%, rgba(236, 72, 153, 0.05) 49%, rgba(236, 72, 153, 0.05) 51%, transparent 52%);
         background-size: 80px 80px;
     }
 }
 
 /* ⛔️ За замовчуванням решітку для секцій вимикаємо повністю */
-.grid-bg { position: relative; }
+.grid-bg {
+    position: relative;
+}
+
 .grid-bg::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: none;              /* << тут ключове */
+    background: none; /* << тут ключове */
     pointer-events: none;
     z-index: 0;
 }
 
 /* 🌙 А ось так ми її вмикаємо лише в dark */
 html.dark .grid-bg::before {
-    background-image:
-            linear-gradient(45deg, transparent 48%, rgba(168,85,247,0.05) 49%, rgba(168,85,247,0.05) 51%, transparent 52%),
-            linear-gradient(-45deg, transparent 48%, rgba(236,72,153,0.05) 49%, rgba(236,72,153,0.05) 51%, transparent 52%);
+    background-image: linear-gradient(45deg, transparent 48%, rgba(168, 85, 247, 0.05) 49%, rgba(168, 85, 247, 0.05) 51%, transparent 52%),
+    linear-gradient(-45deg, transparent 48%, rgba(236, 72, 153, 0.05) 49%, rgba(236, 72, 153, 0.05) 51%, transparent 52%);
     background-size: 80px 80px;
 }
 
 
-
 /* -------- shared helpers -------- */
-.balance { text-wrap: balance; }
+.balance {
+    text-wrap: balance;
+}
 
 /* blink caret */
-@keyframes caret-blink { 0%,45%{opacity:1} 55%,100%{opacity:0} }
-.caret {
-    width:.085em; height:1em; display:inline-block; background: currentColor;
-    animation: caret-blink 1s steps(1,end) infinite; transform: translateY(.12em);
+@keyframes caret-blink {
+    0%, 45% {
+        opacity: 1
+    }
+    55%, 100% {
+        opacity: 0
+    }
 }
-@media (prefers-reduced-motion: reduce){ .caret{ animation: none } }
+
+.caret {
+    width: .085em;
+    height: 1em;
+    display: inline-block;
+    background: currentColor;
+    animation: caret-blink 1s steps(1, end) infinite;
+    transform: translateY(.12em);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .caret {
+        animation: none
+    }
+}
 
 /* smooth gradient animation */
-@keyframes grad-x { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+@keyframes grad-x {
+    0% {
+        background-position: 0% 50%
+    }
+    50% {
+        background-position: 100% 50%
+    }
+    100% {
+        background-position: 0% 50%
+    }
+}
 
 /* -------- headline gradients -------- */
 /* базовий перелив для основного тексту */
@@ -189,7 +227,9 @@ html.dark .grid-bg::before {
             var(--primary) 100%
     );
     background-size: 200% 200%;
-    -webkit-background-clip: text; background-clip: text; color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
     animation: grad-x 12s ease-in-out infinite;
 }
 
@@ -205,7 +245,9 @@ html.dark .grid-bg::before {
             #a855f7 100%
     );
     background-size: 300% 300%;
-    -webkit-background-clip: text; background-clip: text; color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
     animation: grad-x 6s linear infinite;
 }
 
@@ -226,5 +268,17 @@ html.dark .grid-bg::before {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .grad-text, .grad-ithingy, .grad-ithingy-bar { animation: none; background-position: 50% 50% }
+    .grad-text, .grad-ithingy, .grad-ithingy-bar {
+        animation: none;
+        background-position: 50% 50%
+    }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }

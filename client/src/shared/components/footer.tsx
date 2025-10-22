@@ -49,11 +49,15 @@ export function Footer() {
 
                     {/* Links */}
                     <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                        <Link href="#" className="hover:text-foreground transition-colors">
+                        <Link href="/privacy" className="text-sm hover:underline">
                             Privacy Policy
                         </Link>
-                        <Link href="mailto:itingy@gmail.com" className="hover:text-foreground transition-colors">
-                            itingy@gmail.com
+                        <span className="opacity-50">/</span>
+                        <Link href="/privacy/ua" className="text-sm hover:underline">
+                            Політика конфіденційності
+                        </Link>
+                        <Link href="mailto:ithingylabs@gmail.com" className="hover:text-foreground transition-colors">
+                            ithingylabs@gmail.com
                         </Link>
                     </div>
                 </div>

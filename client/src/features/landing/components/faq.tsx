@@ -197,36 +197,68 @@ export function FAQ() {
     return (
         <>
             {/* Our Flow Section */}
-            <section id="our-flow" className="relative py-24 overflow-hidden" ref={ref}>
-                <div className="absolute inset-0 -z-10 purple-pink-gradient opacity-30 dark:opacity-40"/>
+            <section
+                id="our-flow"
+                ref={ref}
+                className="relative py-16 sm:py-20 lg:py-24 overflow-hidden outline-none"
+                tabIndex={-1}
+                onKeyDown={(e) => {
+                    if (e.key === 'ArrowRight') setActive(a => Math.min(a + 1, flowSteps.length - 1))
+                    if (e.key === 'ArrowLeft') setActive(a => Math.max(a - 1, 0))
+                }}
+            >
+                <div className="absolute inset-0 -z-10 purple-pink-gradient opacity-25 dark:opacity-40"/>
 
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* Заголовок */}
                     <motion.h2
                         initial={{opacity: 0, y: 20}}
                         animate={isInView ? {opacity: 1, y: 0} : {}}
                         transition={{duration: 0.5}}
-                        className="text-center text-4xl sm:text-5xl font-bold italic mb-8 text-foreground"
+                        className="text-center text-3xl sm:text-4xl lg:text-5xl font-bold italic mb-3 sm:mb-4 text-foreground"
                     >
                         Our flow — predictable, fast, secure
                     </motion.h2>
 
-                    <div className="flex flex-col lg:flex-row gap-6">
-                        {/* Left: vertical steps */}
-                        <div className="hidden lg:flex flex-col items-start gap-4 w-24">
-                            <div className="relative">
-                                <div className="absolute left-10 top-0 bottom-0 w-px bg-border/60"/>
-                            </div>
+                    {/* Субтайтл + індикатор прогресу */}
+                    <div className="mx-auto max-w-2xl text-center mb-6 sm:mb-10">
+                        <p className="text-sm sm:text-base text-muted-foreground">
+                            Clear steps, measurable outputs, and fast feedback at every stage.
+                        </p>
+                        <div
+                            className="mt-3 inline-flex items-center gap-2 rounded-full border border-border bg-card/50 px-3 py-1 text-xs font-medium text-foreground">
+                            <span aria-live="polite">Step {active + 1} of {flowSteps.length}</span>
+                        </div>
+                    </div>
+
+                    {/* --- MOBILE STEPPER (< lg) --- */}
+                    <div className="mb-6 flex items-center justify-between lg:hidden">
+                        <button
+                            onClick={() => setActive(a => Math.max(a - 1, 0))}
+                            className="inline-flex items-center gap-2 rounded-md border border-border bg-card/40 px-3 py-2 text-sm font-semibold text-foreground hover:border-primary/40 disabled:opacity-50"
+                            disabled={active === 0}
+                            aria-label="Previous step"
+                        >
+                            Prev
+                        </button>
+
+                        <div className="flex gap-2 overflow-x-auto no-scrollbar mx-2" role="tablist"
+                             aria-label="Flow steps">
                             {flowSteps.map((s, i) => {
-                                const isActive = i === active
+                                const isA = i === active
                                 return (
                                     <button
                                         key={s.number}
                                         onClick={() => setActive(i)}
-                                        className={`w-14 h-14 rounded-xl flex items-center justify-center text-sm font-bold transition ${
-                                            isActive
-                                                ? 'bg-primary text-primary-foreground ring-4 ring-primary/20 shadow'
-                                                : 'bg-card/80 text-muted-foreground border border-border hover:border-primary/40'
-                                        }`}
+                                        role="tab"
+                                        aria-selected={isA}
+                                        aria-controls={`flow-step-panel`}
+                                        className={[
+                                            "h-9 min-w-9 px-3 rounded-md text-sm font-bold whitespace-nowrap transition",
+                                            isA
+                                                ? "bg-primary text-primary-foreground ring-2 ring-primary/30"
+                                                : "bg-card/80 text-muted-foreground border border-border hover:border-primary/40"
+                                        ].join(" ")}
                                     >
                                         {s.number}
                                     </button>
@@ -234,76 +266,120 @@ export function FAQ() {
                             })}
                         </div>
 
-                        {/* Center: step content */}
-                        <motion.div
-                            key={step.number}
-                            initial={{opacity: 0, x: 20}}
-                            animate={{opacity: 1, x: 0}}
-                            transition={{duration: 0.35}}
-                            className="flex-1 rounded-xl border border-border/80 bg-background/40 backdrop-blur-md p-8"
+                        <button
+                            onClick={() => setActive(a => Math.min(a + 1, flowSteps.length - 1))}
+                            className="inline-flex items-center gap-2 rounded-md border border-border bg-card/40 px-3 py-2 text-sm font-semibold text-foreground hover:border-primary/40 disabled:opacity-50"
+                            disabled={active === flowSteps.length - 1}
+                            aria-label="Next step"
                         >
-                            <div className="flex flex-col lg:flex-row items-center gap-6">
-                                {/* Icon + title */}
+                            Next
+                        </button>
+                    </div>
+
+                    {/* --- ГОЛОВНА СІТКА --- */}
+                    <div
+                        className="grid grid-cols-1 lg:grid-cols-[96px_minmax(0,1fr)_384px] gap-6 lg:gap-8 items-start">
+                        {/* Ліва вертикальна навігація (lg+) */}
+                        <div className="hidden lg:flex flex-col items-start gap-4 w-24">
+                            <div className="relative">
+                                <div className="absolute left-10 top-0 bottom-0 w-px bg-border/60"/>
+                            </div>
+                            {flowSteps.map((s, i) => {
+                                const isA = i === active
+                                return (
+                                    <button
+                                        key={s.number}
+                                        onClick={() => setActive(i)}
+                                        className={[
+                                            "w-14 h-14 rounded-xl flex items-center justify-center text-sm font-bold transition",
+                                            isA
+                                                ? "bg-primary text-primary-foreground ring-4 ring-primary/20 shadow"
+                                                : "bg-card/80 text-muted-foreground border border-border hover:border-primary/40"
+                                        ].join(" ")}
+                                        aria-current={isA ? "step" : undefined}
+                                        aria-label={`Go to step ${s.number}: ${s.title}`}
+                                    >
+                                        {s.number}
+                                    </button>
+                                )
+                            })}
+                        </div>
+
+                        {/* Центр: контент кроку */}
+                        <motion.div
+                            id="flow-step-panel"
+                            key={step.number}
+                            initial={{opacity: 0, x: 18}}
+                            animate={{opacity: 1, x: 0}}
+                            transition={{duration: 0.25}}
+                            className="flex-1 rounded-xl border border-border/80 bg-background/60 backdrop-blur-md p-4 sm:p-6 lg:p-8 shadow-sm"
+                        >
+                            <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-5 sm:gap-6">
+                                {/* Іконка */}
                                 <div
-                                    className="flex-shrink-0 flex items-center justify-center w-28 h-28 rounded-lg border border-primary/30 bg-primary/8 text-primary text-3xl">
-                                    <Icon className="h-10 w-10"/>
+                                    className="flex-shrink-0 flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-lg border border-primary/30 bg-primary/10 text-primary">
+                                    <Icon className="h-8 w-8 sm:h-10 sm:w-10"/>
                                 </div>
 
+                                {/* Текстова частина */}
                                 <div className="flex-1">
-                                    <div className="flex items-start justify-between gap-4">
-                                        <h3 className="text-2xl sm:text-3xl font-bold text-foreground">
+                                    <div className="flex items-start justify-between gap-3 sm:gap-4">
+                                        <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">
                                             {step.number} — {step.title}
                                         </h3>
 
                                         <button
-                                            onClick={() => setExpanded((v) => !v)}
+                                            onClick={() => setExpanded(v => !v)}
                                             className="inline-flex items-center gap-2 rounded-md border border-border bg-card/30 px-3 py-2 text-sm text-foreground hover:border-primary/40"
+                                            aria-expanded={expanded}
+                                            aria-controls="flow-step-desc"
                                         >
                                             {expanded ? (
-                                                <>
-                                                    Collapse <ChevronUp className="h-4 w-4 text-primary"/>
-                                                </>
+                                                <>Collapse <ChevronUp className="h-4 w-4 text-primary"/></>
                                             ) : (
-                                                <>
-                                                    Expand <ChevronDown className="h-4 w-4 text-primary"/>
-                                                </>
+                                                <>Expand <ChevronDown className="h-4 w-4 text-primary"/></>
                                             )}
                                         </button>
                                     </div>
 
                                     {expanded && (
-                                        <p className="mt-4 text-sm text-muted-foreground max-w-3xl">{step.description}</p>
+                                        <p id="flow-step-desc"
+                                           className="mt-3 sm:mt-4 text-sm sm:text-base leading-relaxed text-muted-foreground max-w-3xl">
+                                            {step.description}
+                                        </p>
                                     )}
 
-                                    <div className="mt-6 grid gap-6 sm:grid-cols-2">
+                                    {/* Плашки процесів/делівері */}
+                                    <div className="mt-5 sm:mt-6 grid gap-5 sm:gap-6 sm:grid-cols-2">
                                         <div>
-                                            <h4 className="mb-3 text-lg font-semibold text-foreground">Processes</h4>
-                                            <div className="flex flex-wrap gap-3">
+                                            <h4 className="mb-2 sm:mb-3 text-base sm:text-lg font-semibold text-foreground">Processes</h4>
+                                            <div className="flex flex-wrap gap-2.5 sm:gap-3">
                                                 {step.processes.map((p) => (
                                                     <span
                                                         key={p}
-                                                        className="rounded-md border border-border bg-card/40 px-3 py-2 text-sm text-foreground"
+                                                        className="rounded-md border border-border bg-card/40 px-3 py-1.5 text-xs sm:text-sm text-foreground"
                                                     >
-                            {p}
-                          </span>
+                      {p}
+                    </span>
                                                 ))}
                                             </div>
                                         </div>
 
                                         <div>
-                                            <h4 className="mb-3 text-lg font-semibold text-foreground">Deliverables</h4>
-                                            <ul className="space-y-3">
+                                            <h4 className="mb-2 sm:mb-3 text-base sm:text-lg font-semibold text-foreground">Deliverables</h4>
+                                            <ul className="space-y-2.5 sm:space-y-3">
                                                 {step.deliverables.map((d, i) => (
-                                                    <li key={i} className="flex items-start gap-3">
+                                                    <li key={i} className="flex items-start gap-2.5">
                                                         <span className="mt-1 text-primary">●</span>
-                                                        <span className="text-sm text-muted-foreground">{d}</span>
+                                                        <span
+                                                            className="text-sm sm:text-base text-muted-foreground">{d}</span>
                                                     </li>
                                                 ))}
                                             </ul>
                                         </div>
                                     </div>
 
-                                    {/* === HERE: ComparisonTable + CTA appear only for active === 0 === */}
+                                    {/* Додатковий блок лише для першого кроку */}
                                     <AnimatePresence initial={false}>
                                         {active === 0 && (
                                             <motion.div
@@ -311,89 +387,79 @@ export function FAQ() {
                                                 initial={{height: 0, opacity: 0, y: -8}}
                                                 animate={{height: 'auto', opacity: 1, y: 0}}
                                                 exit={{height: 0, opacity: 0, y: -8}}
-                                                transition={{duration: 0.35}}
-                                                className="mt-6 overflow-hidden"
+                                                transition={{duration: 0.25}}
+                                                className="mt-5 sm:mt-6 overflow-hidden"
                                             >
-                                                {/* small label */}
-                                                <div className="mb-3 text-sm font-semibold text-foreground">Quick
-                                                    comparison
+
+                                                <div className="mt-4 border-t border-border pt-3">
+                                                    <h5 className="text-sm font-semibold mb-2">Quick comparison</h5>
+                                                    <ComparisonTable/>
                                                 </div>
 
-                                                {/* table */}
-                                                <ComparisonTable/>
-
-                                                {/* CTA under the table */}
-                                                <div className="mt-4 flex items-center gap-3">
+                                                {/* CTA під таблицею */}
+                                                <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-3">
                                                     <a href="/whitepaper" className="text-sm underline">Read
                                                         whitepaper</a>
                                                 </div>
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
+
+
                                 </div>
                             </div>
                         </motion.div>
 
-                        {/* Right: context panel */}
+                        {/* Правий сайдбар */}
                         <div className="w-full lg:w-96">
-                            <div className="sticky top-24 space-y-4">
-                                <div className="rounded-lg border border-border bg-card/40 p-4">
+                            <div className="lg:sticky lg:top-24 space-y-4">
+                                <div className="rounded-lg border border-border bg-card/50 p-4">
                                     <h4 className="text-lg font-semibold mb-2">Why this step matters</h4>
                                     <p className="text-sm text-muted-foreground">
                                         Quick explanation how this step reduces risk and accelerates delivery — direct
-                                        business impact and
-                                        expected outcome for stakeholders.
+                                        business impact and expected outcomes for stakeholders.
                                     </p>
-
                                     <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
                                         <li>— Faster feedback cycles</li>
                                         <li>— Clear acceptance criteria</li>
                                         <li>— Audit-ready artefacts for contracts</li>
                                     </ul>
 
-                                    {/* On last step show small inline summary */}
-                                    {active === flowSteps.length - 1 && (
-                                        <div className="mt-4 border-t border-border pt-3">
-                                            <h5 className="text-sm font-semibold mb-2">Quick comparison</h5>
-                                            <ComparisonTable/>
-                                        </div>
-                                    )}
+
                                 </div>
 
-                                <div className="rounded-lg border border-border bg-card/40 p-4">
+                                <div className="rounded-lg border border-border bg-card/50 p-4">
                                     <h5 className="text-sm font-semibold">Ready to validate fast?</h5>
                                     <p className="mt-2 text-sm text-muted-foreground">
                                         Book a Secure Sprint: 4 weeks, isolated PoC, NDA available. We deliver a working
-                                        prototype and
-                                        prioritized roadmap.
+                                        prototype and a prioritized roadmap.
                                     </p>
                                     <div className="mt-4">
-                                        <a
-                                            href="/contact?intent=secure-sprint"
-                                            className="inline-block w-full text-center px-4 py-2 rounded-md bg-primary text-primary-foreground font-semibold"
-                                        >
-                                            Start a Secure Sprint
+                                        <a href="#contact"
+                                           className="inline-block w-full text-center px-4 py-2 rounded-md bg-primary text-primary-foreground font-semibold">
+                                            Contact us
                                         </a>
                                     </div>
                                 </div>
 
                                 <div className="flex gap-2 flex-wrap">
-                  <span
-                      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-card/50 border border-border text-xs font-medium">
-                    <ShieldCheck className="h-4 w-4"/>
-                    Zero Retention
-                  </span>
+            <span
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-card/60 border border-border text-xs font-medium">
+              <ShieldCheck className="h-4 w-4"/>
+              Zero Retention
+            </span>
                                     <span
-                                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-card/50 border border-border text-xs font-medium">
-                    <Lock className="h-4 w-4"/>
-                    Isolated containers
-                  </span>
+                                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-card/60 border border-border text-xs font-medium">
+              <Lock className="h-4 w-4"/>
+              Isolated containers
+            </span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
+
 
             {/* FAQ Section */}
             <section id="faq" className="py-24 relative bg-background">

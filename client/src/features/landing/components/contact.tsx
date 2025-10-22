@@ -206,8 +206,8 @@ export function Contact() {
                             <div className="flex items-start gap-3">
                                 <Mail className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
                                 <div>
-                                    <a href="mailto:edelweissjula@gmail.com" className="font-semibold text-foreground hover:underline">
-                                        edelweissjula@gmail.com
+                                    <a href="mailto:ithingylabs@gmail.com" className="font-semibold text-foreground hover:underline">
+                                        ithingylabs@gmail.com
                                     </a>
                                 </div>
                             </div>
