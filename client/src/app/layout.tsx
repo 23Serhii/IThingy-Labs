@@ -17,7 +17,7 @@ const siteTagline = "Secure & performant web and mobile engineering";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: siteName,
+    default: `${siteName} | ${siteTagline}`,
     template: `%s | ${siteName}`,
   },
 
@@ -53,10 +53,8 @@ export const metadata: Metadata = {
       { url: "/logo-16x16.png", type: "image/png", sizes: "16x16" },
     ],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
-    shortcut: ["/favicon.ico"],
-    other: [
-      { rel: "mask-icon", url: "/safari-pinned-tab.svg", color: "#6b21a8" },
-    ],
+    shortcut: ["/ithingy-logo.svg"],
+    other: [{ rel: "mask-icon", url: "/ithingy-logo.svg", color: "#6b21a8" }],
   },
   manifest: "/site.webmanifest",
 

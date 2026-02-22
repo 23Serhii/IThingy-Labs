@@ -1,111 +1,54 @@
-'use client'
+"use client";
 
 import React, { JSX, useMemo } from "react";
-import Image from 'next/image'
-import {useState} from 'react'
-import {motion} from 'framer-motion'
-import {ChevronRight, Clock, Users, Server} from 'lucide-react'
+import Image from "next/image";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { ChevronRight, Clock, Users, Server } from "lucide-react";
 import { useLang } from "@/context/LanguageContext";
 
 // 1) типи
 type BaseProject = {
-    id: string
-    title: string
-    tags: string[]
-    description: string
-    media: string
-    daysSpent: number
-    avgDaysTypical: number
-    teamSize: number
-    techHighlights: string[]
-    resultHighlights?: string[]
-}
+  id: string;
+  title: string;
+  tags: string[];
+  description: string;
+  media: string;
+  daysSpent: number;
+  avgDaysTypical: number;
+  teamSize: number;
+  techHighlights: string[];
+  resultHighlights?: string[];
+};
 
 type VideoProject = BaseProject & {
-    type: 'video'
-    poster?: string
-}
+  type: "video";
+  poster?: string;
+};
 
 type ImageProject = BaseProject & {
-    type: 'image' // gif рендеримо як image
-}
+  type: "image"; // gif рендеримо як image
+};
 
-type Project = VideoProject | ImageProject
-
-// 2) масив — СТРОГО Project[]
-const projects: Project[] = [
-  {
-    id: "dropsquad",
-    title: "DropSquad Dashboard",
-    tags: [
-      "Angular",
-      "FastAPI",
-      "Postgres",
-      "Realtime",
-      "WebSockets",
-      "Docker",
-      "Kubernetes",
-      "Grafana",
-    ],
-    description:
-      "Realtime operations dashboard with role-based access, audits and performance analytics. Built for fast incident response and clear operational KPIs.",
-    media: "/edited_dropsquad.mp4",
-    poster: "/dropsquad-poster.jpg",
-    type: "video",
-    daysSpent: 42,
-    avgDaysTypical: 60,
-    teamSize: 2,
-    techHighlights: ["Angular", "FastAPI", "Postgres", "Kubernetes"],
-    resultHighlights: ["Time-to-insight ↓ 3x", "Stable at 2k concurrent users"],
-  },
-  {
-    id: "pow-search",
-    title: "AVESINT.AI",
-    tags: ["Search", "Analytics", "Elasticsearch"],
-    description:
-      "AVESINT.AI is a military-oriented OSINT analytics platform built as a monorepo with a React SPA client, a NestJS API backend, and an asynchronous worker for background tasks.",
-    media: "/avesint.mp4",
-    type: "video",
-    daysSpent: 14,
-    avgDaysTypical: 35,
-    teamSize: 1,
-    techHighlights: ["Qdrant", "Ollama", "TypeScript"],
-    resultHighlights: ["Query latency < 120ms", "Conversion +12%"],
-  },
-  {
-    id: "tonsai",
-    title: "Tonsai Platform",
-    tags: ["Next.js", "GraphQL", "Postgres"],
-    description:
-      "High-throughput platform designed for scale — resilient APIs, background processing and async workers to handle bursty traffic patterns.",
-    media: "/tonsai.gif",
-    type: "image",
-    daysSpent: 30,
-    avgDaysTypical: 68,
-    teamSize: 2,
-    techHighlights: ["Next.js", "GraphQL", "Kubernetes"],
-    resultHighlights: ["99.95% uptime target", "Processing throughput ↑ 4x"],
-  },
-];
-
+type Project = VideoProject | ImageProject;
 
 function useMediaQuery(query: string) {
-    const [matches, setMatches] = useState(false)
-    React.useEffect(() => {
-        const m = window.matchMedia(query)
-        const onChange = () => setMatches(m.matches)
-        onChange()
-        m.addEventListener?.('change', onChange)
-        return () => m.removeEventListener?.('change', onChange)
-    }, [query])
-    return matches
+  const [matches, setMatches] = useState(false);
+  React.useEffect(() => {
+    const m = window.matchMedia(query);
+    const onChange = () => setMatches(m.matches);
+    onChange();
+    m.addEventListener?.("change", onChange);
+    return () => m.removeEventListener?.("change", onChange);
+  }, [query]);
+  return matches;
 }
-
 
 export function CaseStudies(): JSX.Element {
   const [active, setActive] = useState<number>(0); // default: DropSquad active (left wide)
   const { t } = useLang(); // 1. Отримуємо переклади
   const isDesktop = useMediaQuery("(min-width: 768px)"); // md breakpoint
+
   const gridTemplate = isDesktop
     ? active === 0
       ? "1.6fr 1fr 1fr"
@@ -114,11 +57,14 @@ export function CaseStudies(): JSX.Element {
         : "1fr 1fr 1.6fr"
     : "1fr"; // <-- одна колонка на мобільних
 
+  // Перевірка на випадок, якщо словник ще не завантажився
+  if (!t?.cases) return <></>;
+
   const projects: Project[] = useMemo(
     () => [
       {
         id: "dropsquad",
-        title: t.cases.dropsquad.title, // Використовуємо переклад
+        title: t.cases.dropsquad.title,
         tags: [
           "Angular",
           "FastAPI",
@@ -197,12 +143,13 @@ export function CaseStudies(): JSX.Element {
           transition={{ duration: 0.45 }}
           className="text-center mb-14"
         >
+          {/* ПЕРЕКЛАД ЗАГОЛОВКА ТА ПІДЗАГОЛОВКА */}
           <h2 className="text-4xl sm:text-5xl font-bold italic text-foreground">
-            Projects
+            {t.cases.title}
           </h2>
           <div className="inline-flex items-center gap-2 text-muted-foreground mt-2">
             <ChevronRight className="h-5 w-5 text-primary" />
-            <span className="text-sm font-medium">Selected case studies</span>
+            <span className="text-sm font-medium">{t.cases.subtitle}</span>
             <ChevronRight className="h-5 w-5 text-primary" />
           </div>
         </motion.div>
@@ -271,7 +218,6 @@ export function CaseStudies(): JSX.Element {
                         preload="metadata"
                         onContextMenu={(e) => e.preventDefault()}
                         tabIndex={-1}
-                        // controlsList / disablePictureInPicture are allowed if you added global types
                         controlsList="nodownload nofullscreen noremoteplayback"
                         disablePictureInPicture
                         aria-hidden="true"
@@ -298,8 +244,17 @@ export function CaseStudies(): JSX.Element {
                       </div>
 
                       <div className="flex flex-col items-end gap-2 shrink-0">
-                        {statBadge("days", `${p.daysSpent}d`, Clock)}
-                        {statBadge("team", `${p.teamSize}`, Users)}
+                        {/* Лейбл "days" перекладемо як д/d залежно від мови */}
+                        {statBadge(
+                          t.nav.home === "Головна" ? "днів" : "days",
+                          `${p.daysSpent}`,
+                          Clock,
+                        )}
+                        {statBadge(
+                          t.cases.engineers || "engineers",
+                          `${p.teamSize}`,
+                          Users,
+                        )}
                       </div>
                     </div>
 
@@ -320,15 +275,15 @@ export function CaseStudies(): JSX.Element {
                     {/* Нижній блок, який з'являється при кліку (isActive) */}
                     {isActive ? (
                       <div className="mt-auto space-y-6">
-                        {" "}
-                        {/* збільшив відступ */}
                         <div className="flex items-center justify-between gap-4">
                           <div>
                             <div className="text-sm text-muted-foreground">
-                              Delivery vs typical
+                              {t.cases.deliveryLabel}
                             </div>
                             <div className="text-lg font-semibold text-foreground">
-                              {p.daysSpent}d — {speedGain}% faster
+                              {p.daysSpent}
+                              {t.nav.home === "Головна" ? "д" : "d"} —{" "}
+                              {speedGain}% {t.cases.faster}
                             </div>
                           </div>
 
@@ -337,7 +292,7 @@ export function CaseStudies(): JSX.Element {
                               Team
                             </div>
                             <div className="text-lg font-semibold text-foreground">
-                              {p.teamSize} engineers
+                              {p.teamSize} {t.cases.engineers}
                             </div>
                           </div>
                         </div>
@@ -351,7 +306,7 @@ export function CaseStudies(): JSX.Element {
                             ))}
                           </ul>
                         )}
-                        {/* НОВА КНОПКА ДЕТАЛЕЙ */}
+                        {/* КНОПКА ДЕТАЛЕЙ */}
                         <div className="pt-4 border-t border-border/40">
                           <a
                             href={
@@ -365,7 +320,9 @@ export function CaseStudies(): JSX.Element {
                             rel="noopener noreferrer"
                             className="inline-flex items-center justify-center w-full px-6 py-3 rounded-xl bg-primary text-primary-foreground font-bold hover:opacity-90 transition-all gap-2 group"
                           >
-                            View Project Details
+                            {t.nav.home === "Головна"
+                              ? "Деталі проєкту"
+                              : "View Project Details"}
                             <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                           </a>
                         </div>
@@ -373,7 +330,10 @@ export function CaseStudies(): JSX.Element {
                     ) : (
                       <div className="mt-auto">
                         <div className="text-xs text-primary font-medium flex items-center gap-1">
-                          Click to expand <ChevronRight className="w-3 h-3" />
+                          {t.nav.home === "Головна"
+                            ? "Натисніть щоб розгорнути"
+                            : "Click to expand"}{" "}
+                          <ChevronRight className="w-3 h-3" />
                         </div>
                       </div>
                     )}
@@ -388,4 +348,4 @@ export function CaseStudies(): JSX.Element {
   );
 }
 
-export default CaseStudies
+export default CaseStudies;
