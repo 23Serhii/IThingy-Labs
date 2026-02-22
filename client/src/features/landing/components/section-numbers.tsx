@@ -1,156 +1,135 @@
-'use client'
+"use client";
 
-import { useEffect, useMemo, useState } from 'react'
-import { motion } from 'framer-motion'
-
-type Section = { id: string; number: string; title: string }
-
-const sections: Section[] = [
-    { id: 'hero', number: '0', title: 'Hero' },
-    { id: 'services', number: '1', title: 'Services' },
-    { id: 'industries', number: '2', title: 'Industries' },
-    { id: 'cases', number: '3', title: 'Case Studies' },
-    { id: 'testimonials', number: '4', title: 'Testimonials' },
-    { id: 'faq', number: '5', title: 'FAQ' },
-    { id: 'pricing', number: '6', title: 'Pricing' },
-    { id: 'cta', number: '7', title: 'Get Started' },
-    { id: 'contact', number: '8', title: 'Contact' },
-]
+import { useEffect, useState, useRef, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useLang } from "../../../context/LanguageContext";
 
 export function SectionNumbers() {
-    const [activeId, setActiveId] = useState('hero')
-    const [hoverId, setHoverId] = useState<string | null>(null)
+  const { t } = useLang(); // Отримуємо словник перекладів
+  const [activeId, setActiveId] = useState("hero");
+  const [hoverId, setHoverId] = useState<string | null>(null);
+  const isScrollingRef = useRef(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    useEffect(() => {
-        const io = new IntersectionObserver(
-            (entries) => {
-                for (const e of entries) {
-                    if (e.isIntersecting && e.target.id) setActiveId(e.target.id)
-                }
-            },
-            { threshold: 0.5, rootMargin: '-20% 0px -20% 0px' }
-        )
+  // Використовуємо useMemo, щоб масив оновлювався щоразу, коли змінюється мова (t)
+  const sections = useMemo(
+    () => [
+      { id: "hero", number: "0", title: t.nav.hero },
+      { id: "services", number: "1", title: t.nav.services },
+      { id: "industries", number: "2", title: t.nav.industries },
+      { id: "cases", number: "3", title: t.nav.cases },
+      { id: "testimonials", number: "4", title: t.nav.testimonials },
+      { id: "faq", number: "5", title: t.nav.faq },
+      { id: "pricing", number: "6", title: t.nav.pricing },
+      { id: "cta", number: "7", title: t.nav.cta },
+      { id: "contact", number: "8", title: t.nav.contact },
+    ],
+    [t],
+  );
 
-        const observed = new Set<Element>()
-        let attempts = 0
-        let timer: number | undefined
+  useEffect(() => {
+    const options = {
+      root: null,
+      rootMargin: "-45% 0px -45% 0px",
+      threshold: 0,
+    };
 
-        const tryObserve = () => {
-            sections.forEach(({ id }) => {
-                const el = document.getElementById(id)
-                if (el && !observed.has(el)) {
-                    io.observe(el)
-                    observed.add(el)
-                }
-            })
+    const observer = new IntersectionObserver((entries) => {
+      if (isScrollingRef.current) return;
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) setActiveId(entry.target.id);
+      });
+    }, options);
 
-            if (observed.size < sections.length && attempts < 20) {
-                attempts += 1
-                timer = window.setTimeout(tryObserve, 300) as unknown as number
-            }
-        }
+    // Спостерігаємо за секціями
+    sections.forEach((s) => {
+      const el = document.getElementById(s.id);
+      if (el) observer.observe(el);
+    });
 
-        requestAnimationFrame(tryObserve)
+    return () => {
+      observer.disconnect();
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [sections]); // Додаємо sections в залежності, щоб при зміні мови обсервер перепідключився
 
-        return () => {
-            if (timer) clearTimeout(timer)
-            observed.forEach((el) => io.unobserve(el))
-            io.disconnect()
-        }
-    }, [])
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (!el) return;
 
+    isScrollingRef.current = true;
+    setActiveId(id);
 
-    const hoveredIndex = useMemo(
-        () => sections.findIndex((s) => s.id === hoverId),
-        [hoverId]
-    )
+    const top = el.getBoundingClientRect().top + window.pageYOffset - 80;
+    window.scrollTo({ top, behavior: "smooth" });
 
-    const scaleFor = (idx: number) => {
-        if (hoveredIndex === -1) return 1
-        const d = Math.abs(idx - hoveredIndex)
-        if (d === 0) return 1.24
-        if (d === 1) return 1.12
-        if (d === 2) return 1.06
-        return 1
-    }
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      isScrollingRef.current = false;
+    }, 1000);
+  };
 
-    const handleClick = (id: string) => {
-        const el = document.getElementById(id)
-        if (el) {
-            setActiveId(id)
-            el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
-    }
+  return (
+    <div className="fixed right-6 top-1/2 -translate-y-1/2 z-[100] hidden md:block">
+      <nav className="relative flex flex-col items-center py-4 px-2 rounded-full border border-border/40 bg-background/20 backdrop-blur-md shadow-2xl">
+        <ul className="flex flex-col gap-3">
+          {sections.map((s) => {
+            const isActive = activeId === s.id;
+            const isHovered = hoverId === s.id;
 
-    return (
-        <div className="fixed top-1/2 right-0 -translate-y-1/2 z-40 hidden lg:block">
-            {/* Блок притиснутий до правого краю */}
-            <div className="relative w-[78px]">
-                {/* рамка: top, left, bottom */}
-                <div className="absolute inset-y-0 left-0 right-[1px] border-y border-l border-foreground/50 rounded-tl-2xl rounded-bl-2xl bg-background/40 backdrop-blur pointer-events-none" />
+            return (
+              <li
+                key={s.id}
+                className="relative flex items-center justify-center h-8 w-8 cursor-pointer group"
+                onMouseEnter={() => setHoverId(s.id)}
+                onMouseLeave={() => setHoverId(null)}
+                onClick={() => scrollTo(s.id)}
+              >
+                {/* Анімований фон */}
+                {(isActive || isHovered) && (
+                  <motion.div
+                    layoutId="active-highlight"
+                    className={`absolute inset-0 rounded-full ${
+                      isActive ? "bg-primary" : "bg-primary/20"
+                    }`}
+                    transition={{
+                      type: "spring",
+                      stiffness: 500,
+                      damping: 35,
+                    }}
+                  />
+                )}
 
-                <div className="relative py-3 pl-6 pr-1">
-                    <ul className="flex flex-col gap-1.5">
-                        {sections.map((s, idx) => {
-                            const isActive = s.id === activeId
-                            const isHover = hoverId === s.id
+                <span
+                  className={`relative z-30 text-[11px] font-black pointer-events-none transition-colors duration-200 ${
+                    isActive
+                      ? "text-primary-foreground"
+                      : "text-muted-foreground group-hover:text-foreground"
+                  }`}
+                >
+                  {s.number}
+                </span>
 
-                            return (
-                                <li key={s.id} className="relative h-8 w-full">
-                                    {/* овал активного — Figma spec */}
-                                    {isActive && (
-                                        <motion.div
-                                            layoutId="oval"
-                                            className="absolute top-1/2 -translate-y-1/2"
-                                            style={{
-                                                // позиціювання відносно номера; підправ, якщо треба:
-                                                left: '-6px',
-                                                width: '42.52px',
-                                                height: '27.28px',
-                                                border: '1px solid #FFFFFF',
-                                                borderRadius: '999px',
-                                                background: 'transparent',
-                                                boxSizing: 'border-box',
-                                            }}
-                                            initial={false}
-                                            transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                                        />
-                                    )}
-
-                                    {/* кнопка-номер */}
-                                    <motion.button
-                                        onClick={() => handleClick(s.id)}
-                                        onMouseEnter={() => setHoverId(s.id)}
-                                        onMouseLeave={() => setHoverId((h) => (h === s.id ? null : h))}
-                                        className={[
-                                            'relative z-10 w-full h-full text-center font-mono tracking-wide select-none text-[16px] leading-8',
-                                            isActive
-                                                ? 'text-foreground font-semibold'
-                                                : 'text-foreground/60 hover:text-foreground',
-                                        ].join(' ')}
-                                        animate={{ scale: scaleFor(idx) }}
-                                        transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-                                    >
-                                        {s.number}
-                                    </motion.button>
-
-                                    {/* tooltip зліва */}
-                                    <motion.div
-                                        initial={{ opacity: 0, x: -8 }}
-                                        animate={isHover ? { opacity: 1, x: 0 } : { opacity: 0, x: -8 }}
-                                        transition={{ duration: 0.18 }}
-                                        className="pointer-events-none absolute right-full top-1/2 -translate-y-1/2 mr-2"
-                                    >
-                                        <div className="whitespace-nowrap rounded-md border border-border bg-background/90 px-2.5 py-1 text-xs text-foreground shadow-md">
-                                            {s.title}
-                                        </div>
-                                    </motion.div>
-                                </li>
-                            )
-                        })}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    )
+                {/* Tooltip з перекладом */}
+                <AnimatePresence>
+                  {isHovered && (
+                    <motion.div
+                      initial={{ opacity: 0, x: 10 }}
+                      animate={{ opacity: 1, x: -12 }}
+                      exit={{ opacity: 0, x: 10 }}
+                      className="absolute right-full mr-2 px-2 py-1 rounded bg-background border border-border shadow-xl whitespace-nowrap pointer-events-none z-50"
+                    >
+                      <span className="text-[10px] uppercase font-bold text-foreground">
+                        {s.title}
+                      </span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+    </div>
+  );
 }
