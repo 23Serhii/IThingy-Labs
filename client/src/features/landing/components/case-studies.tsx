@@ -44,10 +44,10 @@ function useMediaQuery(query: string) {
   return matches;
 }
 
-export function CaseStudies(): JSX.Element {
-  const [active, setActive] = useState<number>(0); // default: DropSquad active (left wide)
-  const { t } = useLang(); // 1. Отримуємо переклади
-  const isDesktop = useMediaQuery("(min-width: 768px)"); // md breakpoint
+export function CaseStudies(): JSX.Element | null {
+  const [active, setActive] = useState<number>(0);
+  const { t } = useLang();
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const gridTemplate = isDesktop
     ? active === 0
@@ -55,13 +55,13 @@ export function CaseStudies(): JSX.Element {
       : active === 1
         ? "1fr 1.6fr 1fr"
         : "1fr 1fr 1.6fr"
-    : "1fr"; // <-- одна колонка на мобільних
+    : "1fr";
 
-  // Перевірка на випадок, якщо словник ще не завантажився
-  if (!t?.cases) return <></>;
+  // 1. СПОЧАТКУ ВИКЛИКАЄМО useMemo (захист всередині)
+  const projects: Project[] = useMemo(() => {
+    if (!t?.cases) return []; // Якщо словника ще немає, повертаємо порожній масив
 
-  const projects: Project[] = useMemo(
-    () => [
+    return [
       {
         id: "dropsquad",
         title: t.cases.dropsquad.title,
@@ -111,9 +111,11 @@ export function CaseStudies(): JSX.Element {
         techHighlights: ["Next.js", "GraphQL", "Kubernetes"],
         resultHighlights: t.cases.tonsai.results,
       },
-    ],
-    [t],
-  ); // Масив перерахується автоматично, коли зміниться мова (t)
+    ];
+  }, [t]);
+
+  // 2. А ТЕПЕР робимо return, якщо даних немає (після хуків!)
+  if (!t?.cases || projects.length === 0) return null;
 
   const statBadge = (
     label: string,
