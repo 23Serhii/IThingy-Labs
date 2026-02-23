@@ -1,13 +1,12 @@
 "use client";
 
-import React, { JSX, useMemo } from "react";
+import React, { JSX, useMemo, useState } from "react";
 import Image from "next/image";
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronRight, Clock, Users, Server } from "lucide-react";
 import { useLang } from "@/context/LanguageContext";
 
-// 1) типи
+// 1) типові визначення
 type BaseProject = {
   id: string;
   title: string;
@@ -27,7 +26,8 @@ type VideoProject = BaseProject & {
 };
 
 type ImageProject = BaseProject & {
-  type: "image"; // gif рендеримо як image
+  type: "image";
+  poster?: string;
 };
 
 type Project = VideoProject | ImageProject;
@@ -44,10 +44,95 @@ function useMediaQuery(query: string) {
   return matches;
 }
 
+function VideoAutoPlay({
+  id,
+  src,
+  poster,
+  isActive, // Залишаємо проп, але більше не використовуємо його для паузи
+  onReady,
+  className,
+}: {
+  id: string;
+  src: string;
+  poster: string;
+  isActive: boolean;
+  onReady: () => void;
+  className?: string;
+}) {
+  const ref = React.useRef<HTMLVideoElement | null>(null);
+  const isReadyRef = React.useRef(false);
+  const onReadyRef = React.useRef(onReady);
+
+  React.useEffect(() => {
+    onReadyRef.current = onReady;
+  }, [onReady]);
+
+  const handleReady = React.useCallback(() => {
+    if (!isReadyRef.current) {
+      isReadyRef.current = true;
+      onReadyRef.current();
+    }
+  }, []);
+
+  // Перевірка 1: Чи відео ВЖЕ в кеші
+  React.useEffect(() => {
+    if (ref.current && ref.current.readyState >= 2) {
+      handleReady();
+    }
+  }, [handleReady]);
+
+  // Перевірка 2: Керування відтворенням
+  React.useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+
+    // РОЗРИВ ДЕДЛОКУ ДЛЯ ВСІХ:
+    // Викликаємо play() для ВСІХ відео, незалежно від того, активні вони чи ні.
+    // Це гарантовано зніме постери і запустить фонове відтворення.
+    const playPromise = v.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {});
+    }
+
+    // Якщо ви колись захочете повернути паузу для неактивних карток,
+    // просто розкоментуйте ці рядки:
+    /*
+    if (!isActive) {
+      v.pause();
+    }
+    */
+  }, [isActive]);
+
+  return (
+    <video
+      ref={ref}
+      key={id}
+      src={src}
+      className={className}
+      poster={poster}
+      playsInline
+      muted
+      loop
+      controls={false}
+      preload="auto"
+      onContextMenu={(e) => e.preventDefault()}
+      tabIndex={-1}
+      controlsList="nodownload nofullscreen noremoteplayback"
+      disablePictureInPicture
+      aria-hidden="true"
+      onLoadedData={handleReady}
+      onCanPlay={handleReady}
+    />
+  );
+}
+
+
 export function CaseStudies(): JSX.Element | null {
   const [active, setActive] = useState<number>(0);
   const { t } = useLang();
   const isDesktop = useMediaQuery("(min-width: 768px)");
+
+  const [mediaReady, setMediaReady] = useState<Record<string, boolean>>({});
 
   const gridTemplate = isDesktop
     ? active === 0
@@ -57,9 +142,8 @@ export function CaseStudies(): JSX.Element | null {
         : "1fr 1fr 1.6fr"
     : "1fr";
 
-  // 1. СПОЧАТКУ ВИКЛИКАЄМО useMemo (захист всередині)
   const projects: Project[] = useMemo(() => {
-    if (!t?.cases) return []; // Якщо словника ще немає, повертаємо порожній масив
+    if (!t?.cases) return [];
 
     return [
       {
@@ -77,7 +161,7 @@ export function CaseStudies(): JSX.Element | null {
         ],
         description: t.cases.dropsquad.desc,
         media: "/edited_dropsquad.mp4",
-        poster: "/dropsquad-poster.jpg",
+        poster: "/dropsquad-preview.png",
         type: "video",
         daysSpent: 42,
         avgDaysTypical: 60,
@@ -86,11 +170,12 @@ export function CaseStudies(): JSX.Element | null {
         resultHighlights: t.cases.dropsquad.results,
       },
       {
-        id: "pow-search",
+        id: "avesint",
         title: t.cases.avesint.title,
         tags: ["Search", "Analytics", "Elasticsearch"],
         description: t.cases.avesint.desc,
         media: "/avesint.mp4",
+        poster: "/avesint-preload.png",
         type: "video",
         daysSpent: 14,
         avgDaysTypical: 35,
@@ -104,6 +189,7 @@ export function CaseStudies(): JSX.Element | null {
         tags: ["Next.js", "GraphQL", "Postgres"],
         description: t.cases.tonsai.desc,
         media: "/tonsai.gif",
+        poster: "/tonsai-preview.png",
         type: "image",
         daysSpent: 30,
         avgDaysTypical: 68,
@@ -114,7 +200,6 @@ export function CaseStudies(): JSX.Element | null {
     ];
   }, [t]);
 
-  // 2. А ТЕПЕР робимо return, якщо даних немає (після хуків!)
   if (!t?.cases || projects.length === 0) return null;
 
   const statBadge = (
@@ -145,7 +230,6 @@ export function CaseStudies(): JSX.Element | null {
           transition={{ duration: 0.45 }}
           className="text-center mb-14"
         >
-          {/* ПЕРЕКЛАД ЗАГОЛОВКА ТА ПІДЗАГОЛОВКА */}
           <h2 className="text-4xl sm:text-5xl font-bold italic text-foreground">
             {t.cases.title}
           </h2>
@@ -203,34 +287,59 @@ export function CaseStudies(): JSX.Element | null {
                 >
                   <div className="aspect-[16/9] w-full rounded-t-2xl bg-muted/40 flex items-center justify-center border-b border-border/50 overflow-hidden relative">
                     {p.type === "video" ? (
-                      <video
-                        key={p.id}
-                        src={p.media}
-                        className="w-full h-full object-cover select-none"
-                        poster={
-                          p.type === "video"
-                            ? (p.poster ?? "/sub1.png")
-                            : undefined
-                        }
-                        playsInline
-                        muted
-                        autoPlay={isActive}
-                        loop
-                        controls={false}
-                        preload="metadata"
-                        onContextMenu={(e) => e.preventDefault()}
-                        tabIndex={-1}
-                        controlsList="nodownload nofullscreen noremoteplayback"
-                        disablePictureInPicture
-                        aria-hidden="true"
-                      />
+                      <div className="relative w-full h-full">
+                        {!mediaReady[p.id] ? (
+                          <Image
+                            src={p.poster ?? "/avesint-preload.png"}
+                            alt={`${p.title} preview`}
+                            fill
+                            className="object-cover"
+                            priority={isActive || i === 0}
+                          />
+                        ) : null}
+
+                        <VideoAutoPlay
+                          id={p.id}
+                          src={p.media}
+                          poster={p.poster ?? "/avesint-preload.png"}
+                          isActive={isActive}
+                          onReady={() =>
+                            setMediaReady((prev) => ({ ...prev, [p.id]: true }))
+                          }
+                          className={[
+                            "w-full h-full object-cover select-none",
+                            mediaReady[p.id] ? "opacity-100" : "opacity-0",
+                            "transition-opacity duration-300",
+                          ].join(" ")}
+                        />
+                      </div>
                     ) : (
-                      <Image
-                        src={p.media}
-                        alt={p.title}
-                        fill
-                        style={{ objectFit: "cover" }}
-                      />
+                      <div className="relative w-full h-full">
+                        {!mediaReady[p.id] && p.poster ? (
+                          <Image
+                            src={p.poster}
+                            alt={`${p.title} preview`}
+                            fill
+                            className="object-cover"
+                            priority={isActive || i === 0}
+                          />
+                        ) : null}
+
+                        <Image
+                          src={p.media}
+                          alt={p.title}
+                          fill
+                          className={[
+                            "object-cover transition-opacity duration-300",
+                            mediaReady[p.id] ? "opacity-100" : "opacity-0",
+                          ].join(" ")}
+                          priority={isActive}
+                          unoptimized={p.media.endsWith(".gif")}
+                          onLoad={() =>
+                            setMediaReady((prev) => ({ ...prev, [p.id]: true }))
+                          }
+                        />
+                      </div>
                     )}
                   </div>
 
@@ -246,7 +355,6 @@ export function CaseStudies(): JSX.Element | null {
                       </div>
 
                       <div className="flex flex-col items-end gap-2 shrink-0">
-                        {/* Лейбл "days" перекладемо як д/d залежно від мови */}
                         {statBadge(
                           t.nav.home === "Головна" ? "днів" : "days",
                           `${p.daysSpent}`,
@@ -263,18 +371,18 @@ export function CaseStudies(): JSX.Element | null {
                     <p className="text-sm text-muted-foreground mb-4 leading-relaxed break-words">
                       {p.description}
                     </p>
+
                     <div className="flex flex-wrap gap-2 mb-4">
-                      {p.techHighlights.map((t) => (
+                      {p.techHighlights.map((tech) => (
                         <span
-                          key={t}
+                          key={tech}
                           className="px-2 py-1 rounded-md bg-background/30 border border-border text-xs text-muted-foreground"
                         >
-                          {t}
+                          {tech}
                         </span>
                       ))}
                     </div>
 
-                    {/* Нижній блок, який з'являється при кліку (isActive) */}
                     {isActive ? (
                       <div className="mt-auto space-y-6">
                         <div className="flex items-center justify-between gap-4">
@@ -298,7 +406,8 @@ export function CaseStudies(): JSX.Element | null {
                             </div>
                           </div>
                         </div>
-                        {p.resultHighlights && (
+
+                        {p.resultHighlights ? (
                           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-muted-foreground">
                             {p.resultHighlights.map((r) => (
                               <li key={r} className="flex items-start gap-2">
@@ -307,12 +416,12 @@ export function CaseStudies(): JSX.Element | null {
                               </li>
                             ))}
                           </ul>
-                        )}
-                        {/* КНОПКА ДЕТАЛЕЙ */}
+                        ) : null}
+
                         <div className="pt-4 border-t border-border/40">
                           <a
                             href={
-                              p.id === "avesint" || p.id === "pow-search"
+                              p.id === "avesint"
                                 ? "https://s23rhii.dev/projects/0"
                                 : p.id === "dropsquad"
                                   ? "https://s23rhii.dev/projects/2"
