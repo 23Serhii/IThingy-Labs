@@ -45,7 +45,7 @@ export function Hero() {
             <ChevronRight className="h-4 w-4 text-primary" />
             <span className="text-sm font-medium text-primary">
               {/* ДОДАНО ?. для захисту від помилок */}
-              {t?.hero?.badge || "IThingy Labs — startup solutions agency"}
+              {t?.hero?.badge || "IThingy Labs LLC — startup solutions agency"}
             </span>
             <ChevronRight className="h-4 w-4 text-primary" />
           </motion.div>

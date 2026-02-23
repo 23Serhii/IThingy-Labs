@@ -12,7 +12,7 @@ export function Footer() {
                 {/* Bottom Bar */}
                 <div className="pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
                     <div className="text-sm text-muted-foreground">
-                        <p>&copy; {year} IThingy Labs. Kyiv, Ukraine</p>
+                        <p>&copy; {year} IThingy Labs LLC. Kyiv, Ukraine</p>
                     </div>
 
                     {/* Social Icons */}

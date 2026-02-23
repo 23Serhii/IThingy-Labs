@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-const siteName = "iThingy Labs";
+const siteName = "IThingy Labs LLC";
 const siteTagline = "Secure & performant web and mobile engineering";
 
 export const metadata: Metadata = {
@@ -22,10 +22,10 @@ export const metadata: Metadata = {
   },
 
   description:
-    "iThingy Labs is a development studio building fast, secure, and scalable products. From landing pages and SPAs to complex web and mobile platforms — powered by Next.js, Angular, NestJS, Go, PostgreSQL, and AWS.",
+    "IThingy Labs LLC is a development studio building fast, secure, and scalable products. From landing pages and SPAs to complex web and mobile platforms — powered by Next.js, Angular, NestJS, Go, PostgreSQL, and AWS.",
 
   keywords: [
-    "iThingy Labs",
+    "IThingy Labs LLC",
     "web development",
     "mobile development",
     "Next.js",

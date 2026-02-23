@@ -211,7 +211,7 @@
 //       },
 //     },
 //     hero: {
-//       badge: "IThingy Labs — startup solutions agency",
+//       badge: "IThingy Labs LLC — startup solutions agency",
 //       title1: "We are smarter. We are faster. We are better. We are — ",
 //       title2: "IThingy",
 //       btnPrimary: "Get started",
@@ -672,7 +672,7 @@
 //     },
 //
 //     hero: {
-//       badge: "IThingy Labs — агенція стартап-рішень",
+//       badge: "IThingy Labs LLC — агенція стартап-рішень",
 //       title1: "Ми розумніші. Ми швидші. Ми кращі. Ми — ",
 //       title2: "IThingy",
 //       btnPrimary: "Розпочати",
@@ -1167,7 +1167,7 @@ export const dictionaries = {
     },
 
     hero: {
-      badge: "IThingy Labs — startup solutions agency",
+      badge: "IThingy Labs LLC — startup solutions agency",
       title1: "We are smarter. We are faster. We are better. We are — ",
       title2: "IThingy",
       btnPrimary: "Get started",
@@ -1411,7 +1411,7 @@ export const dictionaries = {
         contactBtn: "Contact us",
         aria: {
           mainNav: "Main navigation",
-          homeLink: "IThingy Labs home",
+          homeLink: "IThingy Labs LLC home",
           openMenu: "Open menu",
           closeMenu: "Close menu",
         },
@@ -1680,7 +1680,7 @@ export const dictionaries = {
     },
 
     hero: {
-      badge: "IThingy Labs — агенція стартап-рішень",
+      badge: "IThingy Labs LLC — агенція стартап-рішень",
       title1: "Ми розумніші. Ми швидші. Ми кращі. Ми — ",
       title2: "IThingy",
       btnPrimary: "Розпочати",
@@ -1924,7 +1924,7 @@ export const dictionaries = {
         contactBtn: "Зв'язатися з нами",
         aria: {
           mainNav: "Основна навігація",
-          homeLink: "IThingy Labs головна",
+          homeLink: "IThingy Labs LLC головна",
           openMenu: "Відкрити меню",
           closeMenu: "Закрити меню",
         },

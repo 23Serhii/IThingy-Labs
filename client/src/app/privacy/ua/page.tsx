@@ -1,9 +1,9 @@
 import Link from 'next/link';
 
 export const metadata = {
-    title: 'Політика конфіденційності — IThingy Labs',
+    title: 'Політика конфіденційності — IThingy Labs LLC',
     description:
-        'Як IThingy Labs збирає, використовує та захищає персональні дані. Мінімальний збір, GDPR-сумісно.',
+        'Як IThingy Labs LLC збирає, використовує та захищає персональні дані. Мінімальний збір, GDPR-сумісно.',
 };
 
 const UPDATED = '22 жовтня 2025';
@@ -20,7 +20,7 @@ export default function PrivacyUaPage() {
                 <div className="mt-8 space-y-8 text-sm leading-7 text-foreground">
                     <section>
                         <p>
-                            IThingy Labs («ми», «нас», «наш») поважає вашу приватність. Цей документ пояснює,
+                            IThingy Labs LLC («ми», «нас», «наш») поважає вашу приватність. Цей документ пояснює,
                             як ми збираємо, використовуємо та захищаємо персональні дані під час використання
                             нашого сайту та форм.
                         </p>
@@ -160,7 +160,7 @@ export default function PrivacyUaPage() {
                             Email:{' '}
                             <a className="underline" href={`mailto:${EMAIL}`}>{EMAIL}</a>
                             <br />
-                            Оператор: IThingy Labs (EU)
+                            Оператор: IThingy Labs LLC (EU)
                         </p>
                     </section>
 

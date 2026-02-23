@@ -79,7 +79,7 @@ export function Header() {
             <Link
               href="/"
               className="flex items-center gap-3"
-              aria-label="IThingy Labs"
+              aria-label="IThingy Labs LLC"
             >
               <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-secondary/40">
                 <svg
@@ -105,7 +105,7 @@ export function Header() {
                 </svg>
               </span>
               <span className="text-xl font-bold text-foreground">
-                IThingy Labs
+                IThingy Labs LLC
               </span>
             </Link>
           </motion.div>

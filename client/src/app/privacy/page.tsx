@@ -1,9 +1,9 @@
 import Link from 'next/link';
 
 export const metadata = {
-    title: 'Privacy Policy — IThingy Labs',
+    title: 'Privacy Policy — IThingy Labs LLC',
     description:
-        'How IThingy Labs collects, uses, and protects your personal data. GDPR-ready, minimal data collection.',
+        'How IThingy Labs LLC collects, uses, and protects your personal data. GDPR-ready, minimal data collection.',
 };
 
 const UPDATED = 'October 22, 2025';
@@ -22,7 +22,7 @@ export default function PrivacyPage() {
                 <div className="mt-8 space-y-8 text-sm leading-7 text-foreground">
                     <section>
                         <p>
-                            IThingy Labs (“we”, “our”, “us”) values your privacy. This Policy
+                            IThingy Labs LLC (“we”, “our”, “us”) values your privacy. This Policy
                             explains how we collect, use, and protect personal information
                             when you use our website and forms.
                         </p>
@@ -171,7 +171,7 @@ export default function PrivacyPage() {
                             Email:{' '}
                             <a className="underline" href={`mailto:${EMAIL}`}>{EMAIL}</a>
                             <br />
-                            Operator: IThingy Labs (EU)
+                            Operator: IThingy Labs LLC (EU)
                         </p>
                     </section>
 

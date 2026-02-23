@@ -1,6 +1,6 @@
 export const metadata = {
-    title: 'Validate Your MVP in 4 Weeks — The Secure Sprint by iThingy Labs',
-    description: 'Discover how iThingy Labs helps startups validate their MVPs fast and securely with our 4-week Secure Sprint model — from prototype to roadmap.',
+    title: 'Validate Your MVP in 4 Weeks — The Secure Sprint by IThingy Labs LLC',
+    description: 'Discover how IThingy Labs LLC helps startups validate their MVPs fast and securely with our 4-week Secure Sprint model — from prototype to roadmap.',
 }
 
 export default function SecureSprintMVP() {
@@ -11,7 +11,7 @@ export default function SecureSprintMVP() {
             </h1>
 
             <p className="text-muted-foreground mb-6">
-                Startups often lose time and money on slow development cycles. At <strong>iThingy Labs</strong>, we’ve designed a <strong>Secure Sprint</strong> — a fixed 4-week process that helps founders move from concept to a validated prototype quickly and safely.
+                Startups often lose time and money on slow development cycles. At <strong>IThingy Labs LLC</strong>, we’ve designed a <strong>Secure Sprint</strong> — a fixed 4-week process that helps founders move from concept to a validated prototype quickly and safely.
             </p>
 
             <h2 className="text-2xl font-semibold mb-3 text-foreground">What is a Secure Sprint?</h2>
@@ -45,7 +45,7 @@ export default function SecureSprintMVP() {
                 href="/contact"
                 className="inline-block bg-primary text-primary-foreground px-5 py-3 rounded-md font-semibold"
             >
-                Contact iThingy Labs
+                Contact IThingy Labs LLC
             </a>
         </main>
     )
